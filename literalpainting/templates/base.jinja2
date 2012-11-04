@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+  <head>
+    <meta charset="utf-8">
+    <title>{% if title %}{{ title | escape}} |{% endif %} Literal Painting</title>
+    <meta name="description" content="Natural language processing painting demo.">
+    <meta name="author" content="Concordia COMP 6751 2012 class">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!-- CSS
+	 ================================================== -->
+    <link rel="stylesheet" href="/static/css/base.css">
+    <link rel="stylesheet" href="/static/css/skeleton.css">
+    <link rel="stylesheet" href="/static/css/layout.css">
+
+    <!--[if lt IE 9]>
+	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+    <!-- Favicons
+	 ================================================== -->
+    <link rel="shortcut icon" href="/favicon.ico">
+    <!-- <link rel="apple-touch-icon" href="images/apple-touch-icon.png"> -->
+    <!-- <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png"> -->
+    <!-- <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png"> -->
+
+  </head>
+  <body>
+    <div id="wrapper" class="wrapper">
+      <div id="container" class="container">
+	<div id="header" class="container">
+	  <div class="sitetitle ten columns offset-by-one">
+	    <h1>Literal Painting</h1>
+	  </div>
+	</div><!-- header -->
+	<div id="content" class="container">
+	  <h2>What would you like me to draw?</h2>
+	  <div id="command" class="container info">
+	    <div class="column two-thirds">
+	      <form method="POST" action="/parse">
+		<fieldset class="column alpha omega">
+		  <div class="columns nine">
+		    <input name="command" type="text" placeholder="Type in your instructions." />
+		  </div>
+		  <div class="column one">
+		    <button name="go" id="go" type="submit" value="draw">Go</button>
+		  </div>
+		</fieldset>
+	      </form>
+	    </div>
+	    <div class="instructions expandable info column one-third">
+	      <span class="expander">Instructions</span>
+	      <div class="expands hidden">
+		<p>You can give me instructions on what to draw in English. You can use simple geometric shapes, such as lines, circles and rectangles. The canvas is ? pixel wide by ? pixel high.
+		</p>
+		<p>Here are a few examples:
+		  <ul>
+		    <li>Draw me a line from 50 50 to 100 100.</li>
+		    <li>I want a circle of radius 10 at 106 108.</li>
+		    <li>Reset the canvas.</li>
+		  </ul>
+		</p>
+	      </div>
+	    </div><!-- instructions -->
+	  </div>
+	  <div id="frame">
+	    <canvas id="canvas" width="830" height="438"></canvas>
+	  </div>
+	</div><!-- content -->
+      </div><!-- container -->
+    </div>
+    <script src="/static/js/jquery-1.8.2.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.2/angular.min.js"></script>
+    <script src="/static/js/draw.js"></script>
+    <script src="/static/js/site.js"></script>
+  </body>
+</html>
