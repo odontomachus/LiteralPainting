@@ -4,7 +4,9 @@ import re
 import gettext
 import random
 
-from nltk import load_parser
+from nltk.data import load as data_load
+from nltk.grammar import (Production, FeatureGrammar)
+from nltk.parse.earleychart import FeatureEarleyChartParser
 
 from bottle import jinja2_view as view
 from bottle import jinja2_template as template
@@ -12,7 +14,45 @@ from bottle import route, post, get, run, redirect, request, Bottle
 from bottle import Jinja2Template
 from bottle import static_file
 
-parser = load_parser('file:commandParser.fcfg', trace=0)
+class Integer(object):
+    """ A class that always returns true if it is compared to a number. """
+    def __hash__(self):
+        return hash(type(self))
+
+    def __eq__(self, other):
+        try:
+            return True
+        except:
+            return False
+
+class IntDict(dict):
+    """ Dict which returns i for d[i] if i can be converted to an integer. """
+    def __getitem__(self, key):
+        try:
+            return int(key)
+        except:
+            return super(IntDict, self).__getitem__(key)
+
+    def get(self, key, value=None):
+        try:
+            return int(key)
+        except:
+            return super(IntDict, self).get(key, value)
+
+# In order to accept all numbers, add a production to a terminal which
+# accepts "all" objects which can be converted to an integer (eg '100').
+grammar = data_load('file:commandParser.fcfg')
+productions = grammar.productions()
+
+# Trick production
+# 'NUM -> <integer>'
+production = Production('NUM', [Integer()])
+productions.append(production)
+
+# Rebuild grammar
+grammar = FeatureGrammar('S', productions)
+grammar._lexical_index = IntDict(grammar._lexical_index)
+parser = FeatureEarleyChartParser(grammar, trace=0)
 
 @get('/')
 @view('templates/base.jinja2')
