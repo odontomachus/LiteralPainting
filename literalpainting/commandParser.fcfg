@@ -15,9 +15,8 @@
 
 S[SEM = <?subj(?vp)>] -> NP[NUM=?n,SEM=?subj] VP[NUM=?n,SEM=?vp]
 
-S -> NUM
-
 NP[NUM=?n,SEM=<?det(?nom)> ] -> Det[NUM=?n,SEM=?det]  Nom[NUM=?n,SEM=?nom]
+NP[NUM=?n,SEM=<?det(?nom)> ] -> NUM[NUM=?n] Nom[NUM=?n,SEM=?nom]
 NP[LOC=?l,NUM=?n,SEM=?np] -> PropN[LOC=?l,NUM=?n,SEM=?np]
 
 Nom[NUM=?n,SEM=?nom] -> N[NUM=?n,SEM=?nom]
@@ -68,4 +67,7 @@ P[+from] -> 'from'
 P[+at] -> 'at'
 P[+of] -> 'of'
 
-NUM -> '0'
+# LEAVE THIS LAST for now as the feature addition for "magic" numbers
+# reuses last lhs
+NUM[NUM=sg, SEM=<\P Q.exists x.(P(x) & Q(x))>] -> '1'
+NUM[NUM=pl, SEM=<\P Q.exists x.(P(x) & Q(x))>] -> '0'

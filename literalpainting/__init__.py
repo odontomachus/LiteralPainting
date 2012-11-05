@@ -17,13 +17,24 @@ from bottle import static_file
 class Integer(object):
     """ A class that always returns true if it is compared to a number. """
     def __hash__(self):
-        return hash(type(self))
+        return hash(getattr(self, 'value', 0))
 
     def __eq__(self, other):
         try:
+            assert int(other) > 1
+            self.value = other
             return True
         except:
             return False
+
+    def __ne__(self, other):
+        try:
+            assert int(other)
+            self.value = other
+            return False
+        except:
+            return True
+
 
 class IntDict(dict):
     """ Dict which returns i for d[i] if i can be converted to an integer. """
@@ -35,7 +46,8 @@ class IntDict(dict):
 
     def get(self, key, value=None):
         try:
-            return int(key)
+            int(key) 
+            return key
         except:
             return super(IntDict, self).get(key, value)
 
@@ -46,13 +58,16 @@ productions = grammar.productions()
 
 # Trick production
 # 'NUM -> <integer>'
-production = Production('NUM', [Integer()])
+production = Production(productions[-1].lhs(), [Integer()])
 productions.append(production)
 
+#print(type(grammar.start()))
+
 # Rebuild grammar
-grammar = FeatureGrammar('S', productions)
+grammar = FeatureGrammar(grammar.start(), productions)
 grammar._lexical_index = IntDict(grammar._lexical_index)
 parser = FeatureEarleyChartParser(grammar, trace=0)
+
 
 @get('/')
 @view('templates/base.jinja2')
