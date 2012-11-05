@@ -2,6 +2,7 @@
 import sys
 import re
 import gettext
+import random
 
 from nltk import load_parser
 
@@ -43,12 +44,15 @@ def parse():
     try:
         trees = parser.nbest_parse(command.split())
         if not trees:
-            errors = ['I could not parse this sentence']
+            errors = ['I could not parse this sentence.']
         elif len(trees) > 1:
             errors = ['This sentence had multiple interpretations.']
         else:
             status = True
-            data = {'tree': trees[0]}
+            data = {
+                'tree': trees[0],
+                'actions': [(random.randint(10,790), random.randint(10,390), 10, 'circle')]
+                }
     except ValueError as e:
         errors = ['I got the following error: <br /><pre>' + str(e) + '</pre>']
     return {'status':status, 'errors':errors, 'data':data}

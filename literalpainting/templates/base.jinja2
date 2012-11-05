@@ -42,11 +42,15 @@
 	    <div class="column two-thirds">
 	      <form method="POST" action="/parse">
 		<fieldset class="column alpha omega">
-		  <div class="columns nine">
+		  <div class="columns eight">
 		    <input name="command" type="text" placeholder="Type in your instructions." />
 		  </div>
 		  <div class="column one">
 		    <button name="go" id="go" type="submit" value="draw">Go</button>
+		  </div>
+		  <div id="processing" class="column two">
+		    <img src="/static/theme/loading.gif" alt="please wait"/>
+		    Processing!
 		  </div>
 		</fieldset>
 	      </form>
@@ -65,6 +69,10 @@
 		</p>
 	      </div>
 	    </div><!-- instructions -->
+	  </div><!-- commands -->
+	  <div id="errors">
+	    <span>Errors:</span>
+	    <ul></ul>
 	  </div>
 	  <div id="frame">
 	    <canvas id="canvas" width="830" height="438"></canvas>

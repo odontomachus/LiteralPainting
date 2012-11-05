@@ -28,6 +28,13 @@
     height: 438px;
 }
 
+#errors {
+    display: none;
+}
+
+#processing {
+    display: none;
+}
 .expandable .expander {
     cursor: pointer;
     text-decoration: underline;

@@ -21,6 +21,3 @@ lp.rectangle = function (x1,y1,x2,y2) {
     lp.ctx.stroke();
 }
 
-lp.rectangle(90,90,110,110);
-lp.line(10,20,90,100);
-lp.circle(100,100,10);
