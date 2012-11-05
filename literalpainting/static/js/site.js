@@ -1,7 +1,10 @@
 site = {
     processing: false,
 
-    clean: function() {
+    /**
+     * Clean site after a submit.
+     */
+    reset: function() {
 	$('#processing').hide();
 	$('#go').show();
 	$('#errors').hide();
@@ -13,8 +16,12 @@ site = {
      * Parse the response from a call to server's parse method.
      */
     parse: function (data) {
-	site.clean();
+	site.reset();
 	if (data.status) {
+	    /**
+	     * Draw objects on canvas. Expects a json array with
+	     * [ [arg0, arg1, ... argN, funcName], <more actions...> ]
+	     */
 	    var actions = data.data.actions;
 	    for (var i in actions) {
 		var action = data.data.actions[i];
@@ -39,7 +46,7 @@ site = {
      * Clean waiting state if backend requeest errors out.
      */
     error: function (jqXHR, textStatus, errorThrown) {
-	site.clean();
+	site.reset();
     },
 
     /**
@@ -50,7 +57,7 @@ site = {
 	if (site.processing) {
 	    return false;
 	}
-	site.clean();
+	site.reset();
 	site.processing = true
 	$('#processing').show();
 	$('#go').hide();

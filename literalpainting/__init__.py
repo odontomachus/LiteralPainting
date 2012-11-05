@@ -51,6 +51,7 @@ def parse():
             status = True
             data = {
                 'tree': trees[0],
+                # @TODO
                 'actions': [(random.randint(10,790), random.randint(10,390), 10, 'circle')]
                 }
     except ValueError as e:
@@ -60,6 +61,7 @@ def parse():
 
 @route('/static/<filepath:path>')
 def server_static(filepath):
+    """ Serve static files (css/js/images). """
     return static_file(filepath, root='./static')
 
 
