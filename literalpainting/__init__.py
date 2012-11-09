@@ -5,9 +5,9 @@ import gettext
 import random
 
 from nltk.data import load as data_load
-from nltk.grammar import (Production, FeatureGrammar)
+from nltk.grammar import (Production, FeatureGrammar, FeatStructNonterminal)
 from nltk.parse.earleychart import FeatureEarleyChartParser
-
+from nltk.featstruct import FeatStructParser
 from bottle import jinja2_view as view
 from bottle import jinja2_template as template
 from bottle import route, post, get, run, redirect, request, Bottle
@@ -56,18 +56,42 @@ class IntDict(dict):
 grammar = data_load('file:commandParser.fcfg')
 productions = grammar.productions()
 
-# Trick production
-# 'NUM -> <integer>'
-production = Production(productions[-1].lhs(), [Integer()])
-productions.append(production)
+RE_INT = re.compile(r'\d+$')
 
-#print(type(grammar.start()))
+feature_parser = FeatStructParser()
 
-# Rebuild grammar
-grammar = FeatureGrammar(grammar.start(), productions)
-grammar._lexical_index = IntDict(grammar._lexical_index)
-parser = FeatureEarleyChartParser(grammar, trace=3)
+def num_production(n):
+    """ Return a production NUM -> n """
+    lhs = FeatStructNonterminal('NUM')
+    lhs.update(feature_parser.parse('[NUM=pl, SEM=<\V.V({num})(identity)>]'.format(num=n)))
+    return Production(lhs, [n])
 
+def rectangle(start, end):
+    return start + end + ('rectangle',)
+
+def line(start, end):
+    return start + end + ('line',)
+
+def draw(x):
+    return x
+
+def circle(at, rad):
+    return at + rad + ('circle',)
+
+def radius(rad):
+    return (rad,)
+
+def diameter(rad):
+    return (int(rad)//2,)
+
+def pixel(p):
+    return p
+
+def loc(x,y):
+    return (x,y)
+
+def identity(x):
+    return x
 
 @get('/')
 @view('templates/base.jinja2')
@@ -93,23 +117,34 @@ def parse():
     data = {}
     errors = []
 
-    command = request.forms.get('command')
     # preprocess
-    command.strip(' .')
+    command = request.forms.get('command').strip(' .?!')
+    tokens = command.split()
+
+    lproductions = list(productions)
+
+    # find all integers
+    ints = set(filter(RE_INT.match, command.split()))
+    # Add a production for every integer
+    lproductions.extend(map(num_production, ints))
+
+    lgrammar = FeatureGrammar(grammar.start(), lproductions)
+
+    lgrammar._lexical_index = IntDict(lgrammar._lexical_index)
+    parser = FeatureEarleyChartParser(lgrammar, trace=0)
+
     try:
         trees = parser.nbest_parse(command.split())
         if not trees:
             errors = ['I could not parse this sentence.']
         elif len(trees) > 1:
-            for tree in trees:
-                print tree
             errors = ['This sentence had multiple interpretations.']
         else:
             status = True
             data = {
                 'tree': trees[0],
                 # @TODO
-                'actions': [(random.randint(10,790), random.randint(10,390), 10, 'circle')]
+                'actions': [eval(str(trees[0].node['SEM']))]
                 }
     except ValueError as e:
         errors = ['I got the following error: <br /><pre>' + str(e) + '</pre>']

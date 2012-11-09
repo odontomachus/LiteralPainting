@@ -11,19 +11,22 @@
 
 S[SEM = ?vp] -> NP[NUM=?n] VP[NUM=?n,SEM=?vp]
 
-NP[NUM=sg, SEM = < ?obj(?from,?to)>] -> Det[NUM=sg] N[+obj, SEM=?obj] PP[TYPE=from, SEM=?from] PP[TYPE=to, SEM=?to]
-NP[NUM=sg, SEM= < ?obj(?at,?of)>] -> Det[NUM=sg] N[+obj, SEM=?obj] PP[TYPE=at, SEM=?at] PP[TYPE=with, SEM=?of]
+NP[NUM=sg, -size, SEM = < ?obj(?from,?to)>] -> Det[NUM=sg] N[+obj, SEM=?obj] PP[TYPE=from, SEM=?from] PP[TYPE=to, SEM=?to]
+NP[NUM=sg, -size, SEM= < ?obj(?at,?with)>] -> Det[NUM=sg] N[+obj, SEM=?obj] PP[TYPE=at, SEM=?at] PP[TYPE=with, -size, SEM=?with]
 
-NP[NUM=sg] -> 'I'
+NP[NUM=sg, +attr, SEM=<?obj(?of)>] -> Det[NUM=sg] N[-obj, SEM=?obj] PP[TYPE=of, SEM=?of]
+
+NP[NUM=sg, -size] -> 'I'
 
 VP[NUM=?n,SEM=<?v(?obj)>] -> TV[NUM=?n,SEM=?v] NP[SEM=?obj]
 
-PP[TYPE=?t, SEM=?np] -> P[TYPE=?t] NP[+loc, SEM=?np]
-PP[TYPE=of, SEM=?np] -> P[TYPE=of] NP[+size, SEM=?np]
-PP[TYPE=with, SEM=?np] -> P[TYPE=with] NP[+size, SEM=?np]
+PP[TYPE=?t, SEM=?np] -> P[TYPE=?t, +loc] NP[+loc, -unit, SEM=?np]
 
-NP[+loc, SEM=<loc(?x,?y)>] -> NUM[SEM=?x] NUM[SEM=?y]
-NP[+size, SEM=<?unit(?n)>] -> NUM[NUM=?n, SEM=?n] N[+unit, NUM=?n, SEM=?unit]
+PP[TYPE=of, SEM=?np] -> P[TYPE=of] NP[NUM=?n, +size, SEM=?np]
+PP[TYPE=with, SEM=?np] -> P[TYPE=with] NP[+attr, SEM=?np]
+
+NP[+loc, -size, SEM=<loc(?x,?y)>] -> NUM[SEM=?x] NUM[SEM=?y]
+NP[+size, -loc, SEM=<?unit(?x)>] -> NUM[NUM=?n, SEM=?x] N[+unit, NUM=?n, SEM=?unit]
 
 
 #############################
@@ -33,22 +36,23 @@ NP[+size, SEM=<?unit(?n)>] -> NUM[NUM=?n, SEM=?n] N[+unit, NUM=?n, SEM=?unit]
 Det[NUM=sg,SEM=<\P Q.exists x.(P(x) & Q(x))>] -> 'a'
 Det[NUM=sg,SEM=<\P Q.exists x.(P(x) & Q(x))>] -> 'an'
 
-N[NUM=sg, +obj, SEM=<\x y r.circle(x,y,r)>] -> 'circle'
+N[NUM=sg, +obj, SEM=<\c r.circle(c,r)>] -> 'circle'
 N[NUM=sg, +obj, SEM=<\c1 c2.rectangle(c1,c2)>] -> 'rectangle'
 N[NUM=sg, +obj, SEM=<\c1 c2.line(c1,c2)>] -> 'line'
 N[NUM=sg, -obj, SEM=<\x.radius(x)>] -> 'radius'
+N[NUM=sg, -obj, SEM=<\x.diameter(x)>] -> 'diameter'
 N[+unit, -obj, NUM=sg,SEM=<\x.pixel(x)>] -> 'pixel'
 N[+unit, -obj, NUM=pl,SEM=<\x.pixel(x)>] -> 'pixels'
 
-TV[NUM=sg, SEM=<\x.exec(x)>] -> 'want'
+TV[NUM=sg, SEM=<\x.draw(x)>] -> 'want'
 
 
 P[TYPE=to] -> 'to'
 P[TYPE=from] -> 'from'
 P[TYPE=at] -> 'at'
-P[TYPE=at] -> 'at'
-P[TYPE=of] -> 'of'
-P[TYPE=with] -> 'with'
+P[TYPE=around] -> 'around'
+P[TYPE=of, -loc] -> 'of'
+P[TYPE=with, -loc] -> 'with'
 
 
 # LEAVE THIS LAST for now as the feature addition for "magic" numbers
