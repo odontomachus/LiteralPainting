@@ -66,7 +66,7 @@ productions.append(production)
 # Rebuild grammar
 grammar = FeatureGrammar(grammar.start(), productions)
 grammar._lexical_index = IntDict(grammar._lexical_index)
-parser = FeatureEarleyChartParser(grammar, trace=0)
+parser = FeatureEarleyChartParser(grammar, trace=3)
 
 
 @get('/')
@@ -101,6 +101,8 @@ def parse():
         if not trees:
             errors = ['I could not parse this sentence.']
         elif len(trees) > 1:
+            for tree in trees:
+                print tree
             errors = ['This sentence had multiple interpretations.']
         else:
             status = True
