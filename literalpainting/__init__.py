@@ -11,6 +11,8 @@ from bottle import jinja2_view as view
 from bottle import route, post, get, run, request
 from bottle import static_file
 
+import draw
+
 grammar = data_load('file:commandParser.fcfg')
 productions = grammar.productions()
 
@@ -23,33 +25,6 @@ def num_production(n):
     lhs = FeatStructNonterminal('NUM')
     lhs.update(feature_parser.parse('[NUM=pl, SEM=<\V.V({num})(identity)>]'.format(num=n)))
     return Production(lhs, [n])
-
-def rectangle(start, end):
-    return start + end + ('rectangle',)
-
-def line(start, end):
-    return start + end + ('line',)
-
-def draw(x):
-    return x
-
-def circle(at, rad):
-    return at + rad + ('circle',)
-
-def radius(rad):
-    return (rad,)
-
-def diameter(rad):
-    return (int(rad)//2,)
-
-def pixel(p):
-    return p
-
-def loc(x,y):
-    return (x,y)
-
-def identity(x):
-    return x
 
 @get('/')
 @view('templates/base.jinja2')
@@ -103,8 +78,8 @@ def parse():
             status = True
             data = {
                 'tree': trees[0],
-                # Eval semantics 
-                'actions': [eval(str(trees[0].node['SEM']))]
+                # Eval semantics in draw namespace
+                'actions': [eval(str(trees[0].node['SEM']), draw.functions)]
                 }
     except ValueError as e:
         errors = ['I got the following error: <br /><pre>' + str(e) + '</pre>']

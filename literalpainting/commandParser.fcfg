@@ -1,9 +1,3 @@
-# I want a circle with a radius of 20 pixels at 30 30.
-# sem( exec(circle(x,y,radius(r)))
-
-# I want a line from 10 10 to 100 100
-# exec(line(10,10,100,100))
-
 % start S
 ############################
 # Grammar Rules
