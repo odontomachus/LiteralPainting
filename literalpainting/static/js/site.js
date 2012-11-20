@@ -23,6 +23,9 @@ site = {
 	     * [ [arg0, arg1, ... argN, funcName], <more actions...> ]
 	     */
 	    var actions = data.data.actions;
+	    sentence = $('<li />').hide().html(data.data.sentence);
+	    $('#history ul').prepend(sentence);
+	    sentence.slideDown();
 	    for (var i in actions) {
 		var action = data.data.actions[i];
 		var figure = action.pop()

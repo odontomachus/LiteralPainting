@@ -50,6 +50,11 @@
     list-style: disc;
 }
 
+#history {
+    margin-top: 20px;
+}
+
+
 .hidden {
     display: none;
 }
