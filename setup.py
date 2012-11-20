@@ -10,6 +10,7 @@ requires = [
     'nltk',
     'bottle',
     'jinja2',
+    'beaker',
     ]
 
 setup(name='LiteralPainting',

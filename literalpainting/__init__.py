@@ -7,11 +7,24 @@ from nltk.grammar import (Production, FeatureGrammar, FeatStructNonterminal)
 from nltk.parse.earleychart import FeatureEarleyChartParser
 from nltk.featstruct import FeatStructParser
 
+import bottle
 from bottle import jinja2_view as view
 from bottle import route, post, get, run, request
 from bottle import static_file
 
+from beaker.middleware import SessionMiddleware
+
 import draw
+from draw import Drawable
+
+session_opts = {
+    'session.type': 'file',
+    'session.cookie_expires': 300,
+    'session.data_dir': './tmp/sessions',
+    'session.auto': True,
+}
+
+app = SessionMiddleware(bottle.app(), session_opts)
 
 grammar = data_load('file:commandParser.fcfg')
 productions = grammar.productions()
@@ -75,11 +88,30 @@ def parse():
         elif len(trees) > 1:
             errors = ['This sentence had multiple interpretations.']
         else:
+
+            def do(items):
+                if not isinstance(items, list):
+                    items = [items]
+
+                # Check whether all items are drawable
+                assert(reduce(lambda x,y: x and y, map(lambda x: isinstance(x, Drawable), items)))
+
+                # Track what we're drawing
+                session = bottle.request.environ.get('beaker.session')
+                history = session.get('history', [])
+                session['history'] = history
+                history.extend(items)
+                return [item.do() for item in items]
+
+            # setup an execution context
+            draw.functions['draw'] = do
+
             status = True
             data = {
+                'sentence': request.forms.get('command'),
                 'tree': trees[0],
                 # Eval semantics in draw namespace
-                'actions': [eval(str(trees[0].node['SEM']), draw.functions)]
+                'actions': eval(str(trees[0].node['SEM']), draw.functions),
                 }
     except ValueError as e:
         errors = ['I got the following error: <br /><pre>' + str(e) + '</pre>']
@@ -93,4 +125,4 @@ def server_static(filepath):
     return static_file(filepath, root='./static')
 
 if __name__ == '__main__':
-    run(host='localhost', port=8080, debug=True, reloader=True)
+    run(app=app, host='localhost', port=8080, debug=True, reloader=True)
