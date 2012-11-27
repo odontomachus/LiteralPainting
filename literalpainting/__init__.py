@@ -36,7 +36,8 @@ feature_parser = FeatStructParser()
 def num_production(n):
     """ Return a production NUM -> n """
     lhs = FeatStructNonterminal('NUM')
-    lhs.update(feature_parser.parse('[NUM=pl, SEM=<\V.V({num})(identity)>]'.format(num=n)))
+    pl = 'sg' if n == '1' else 'pl'
+    lhs.update(feature_parser.parse('[NUM={pl}, SEM=<\V.V({num})(identity)>]'.format(pl=pl, num=n)))
     return Production(lhs, [n])
 
 @get('/')
@@ -86,11 +87,13 @@ def parse():
         if not trees:
             errors = ['I could not parse this sentence.']
         elif len(trees) > 1:
+            for tree in trees: print tree
             errors = ['This sentence had multiple interpretations.']
         else:
 
             def do(items):
-                if not isinstance(items, list):
+                if not (isinstance(items, list) 
+                        or isinstance(items, tuple)):
                     items = [items]
 
                 # Check whether all items are drawable
@@ -107,13 +110,21 @@ def parse():
             draw.functions['draw'] = do
 
             status = True
-            data = {
-                'sentence': request.forms.get('command'),
-                'tree': trees[0],
-                # Eval semantics in draw namespace
-                'actions': eval(str(trees[0].node['SEM']), draw.functions),
-                }
+            try:
+                commands = eval(str(trees[0].node['SEM']), draw.functions)
+                data = {
+                    'sentence': request.forms.get('command'),
+                    'tree': trees[0],
+                    # Eval semantics in draw namespace
+                    'actions': commands,
+                    }
+
+            except AssertionError as e:
+                status = False
+                errors = ['I got the following semantic error: <br /><pre>' + str(e) + '</pre>']
+
     except ValueError as e:
+        status = False
         errors = ['I got the following error: <br /><pre>' + str(e) + '</pre>']
     return {'status':status, 'errors':errors, 'data':data}
 

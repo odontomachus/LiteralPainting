@@ -5,23 +5,30 @@
 
 S[SEM = ?vp] -> NP[NUM=?n] VP[NUM=?n,SEM=?vp]
 
-NP[NUM=sg, -size, SEM = < ?obj(?from,?to)>] -> Det[NUM=sg] N[+obj, SEM=?obj] PP[TYPE=from, SEM=?from] PP[TYPE=to, SEM=?to]
-NP[NUM=sg, -size, SEM= < ?obj(?at,?with)>] -> Det[NUM=sg] N[+obj, SEM=?obj] PP[TYPE=at, SEM=?at] PP[TYPE=with, -size, SEM=?with]
-
-NP[NUM=sg, +attr, SEM=<?obj(?of)>] -> Det[NUM=sg] N[-obj, SEM=?obj] PP[TYPE=of, SEM=?of]
-
-NP[NUM=sg, -size] -> 'I'
-
 VP[NUM=?n,SEM=<?v(?obj)>] -> TV[NUM=?n,SEM=?v] NP[SEM=?obj]
 
-PP[TYPE=?t, SEM=?np] -> P[TYPE=?t, +loc] NP[+loc, -unit, SEM=?np]
+NP[NUM=sg, TYPE=person] -> 'I'
 
-PP[TYPE=of, SEM=?np] -> P[TYPE=of] NP[NUM=?n, +size, SEM=?np]
-PP[TYPE=with, SEM=?np] -> P[TYPE=with] NP[+attr, SEM=?np]
+# Shapes
+NP[NUM=sg, TYPE=shape, SEM=<?obj(?from,?to)>] -> Det[NUM=sg] N[TYPE=shape, SEM=?obj] PP[TYPE=from, SEM=?from] PP[TYPE=to, SEM=?to]
+NP[NUM=sg, TYPE=shape, SEM=<?obj(?at,?with)>] -> Det[NUM=sg] N[TYPE=shape, SEM=?obj] PP[TYPE=at, SEM=?at] PP[TYPE=with, SEM=?with]
 
-NP[+loc, -size, SEM=<loc(?x,?y)>] -> NUM[SEM=?x] NUM[SEM=?y]
-NP[+size, -loc, SEM=<?unit(?x)>] -> NUM[NUM=?n, SEM=?x] N[+unit, NUM=?n, SEM=?unit]
+# Property of shapes (eg radius, width?, height?)
+NP[NUM=sg, TYPE=property, SEM=<?obj(?of)>] -> Det[NUM=sg] N[TYPE=property, SEM=?obj] PP[TYPE=of, SEM=?of]
 
+# Locations
+NP[TYPE=location, SEM=<loc(?x,?y)>] -> NUM[SEM=?x] NUM[SEM=?y]
+NP[TYPE=length, SEM=<?unit(?x)>] -> NUM[NUM=?n, SEM=?x] N[TYPE=length, NUM=?n, SEM=?unit]
+
+# Conjunction of NP
+NP[NUM=pl, SEM=<?p(?x,?y)>, TYPE=?t1] -> NP[SEM=?x, TYPE=?t1] CONJ[SEM=?p] NP[SEM=?y, TYPE=?t1]
+
+# Prepositions for locations
+PP[TYPE=?t, OBJ=location, SEM=?np] -> Prep[TYPE=?t, OBJ=location] NP[TYPE=location, SEM=?np]
+
+# Prepositions for properties
+PP[TYPE=of, SEM=?np] -> Prep[TYPE=of] NP[NUM=?n, TYPE=length, SEM=?np]
+PP[TYPE=with, SEM=?np] -> Prep[TYPE=with] NP[TYPE=property, SEM=?np]
 
 #############################
 # Lexical Rules
@@ -30,26 +37,23 @@ NP[+size, -loc, SEM=<?unit(?x)>] -> NUM[NUM=?n, SEM=?x] N[+unit, NUM=?n, SEM=?un
 Det[NUM=sg,SEM=<\P Q.exists x.(P(x) & Q(x))>] -> 'a'
 Det[NUM=sg,SEM=<\P Q.exists x.(P(x) & Q(x))>] -> 'an'
 
-N[NUM=sg, +obj, SEM=<\c r.circle(c,r)>] -> 'circle'
-N[NUM=sg, +obj, SEM=<\c1 c2.rectangle(c1,c2)>] -> 'rectangle'
-N[NUM=sg, +obj, SEM=<\c1 c2.line(c1,c2)>] -> 'line'
-N[NUM=sg, -obj, SEM=<\x.radius(x)>] -> 'radius'
-N[NUM=sg, -obj, SEM=<\x.diameter(x)>] -> 'diameter'
-N[+unit, -obj, NUM=sg,SEM=<\x.pixel(x)>] -> 'pixel'
-N[+unit, -obj, NUM=pl,SEM=<\x.pixel(x)>] -> 'pixels'
+N[NUM=sg, TYPE=shape, SEM=<\c r.circle(c,r)>] -> 'circle'
+N[NUM=sg, TYPE=shape, SEM=<\c1 c2.rectangle(c1,c2)>] -> 'rectangle'
+N[NUM=sg, TYPE=shape, SEM=<\c1 c2.line(c1,c2)>] -> 'line'
+N[NUM=sg, TYPE=property, SEM=<\x.radius(x)>] -> 'radius'
+N[NUM=sg, TYPE=property, SEM=<\x.diameter(x)>] -> 'diameter'
+N[TYPE=length, NUM=sg,SEM=<\x.pixel(x)>] -> 'pixel'
+N[TYPE=length, NUM=pl,SEM=<\x.pixel(x)>] -> 'pixels'
 
 TV[NUM=sg, SEM=<\x.draw(x)>] -> 'want'
 
 
-P[TYPE=to] -> 'to'
-P[TYPE=from] -> 'from'
-P[TYPE=at] -> 'at'
-P[TYPE=around] -> 'around'
-P[TYPE=of, -loc] -> 'of'
-P[TYPE=with, -loc] -> 'with'
+Prep[TYPE=to, OBJ=location] -> 'to'
+Prep[TYPE=from, OBJ=location] -> 'from'
+Prep[TYPE=at, OBJ=location] -> 'at'
+Prep[TYPE=around, OBJ=location] -> 'around'
+Prep[TYPE=of, OBJ=of] -> 'of'
+Prep[TYPE=with, OBJ=with] -> 'with'
 
-
-# LEAVE THIS LAST for now as the feature addition for "magic" numbers
-# reuses last lhs
-NUM[NUM=sg, SEM=<\V.V(1)>] -> '1'
-NUM[NUM=pl, SEM=<\V.V(n)>] -> '0'
+CONJ[SEM=<\x y.and_(x,y)>] -> 'and'
+DISJ[SEM=<\x y.or_(x,y)>] -> 'or'

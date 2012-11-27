@@ -32,6 +32,9 @@ def diameter(rad):
 def radius(rad):
     return (rad,)
 
+def and_(x, y):
+    return (x,y)
+
 class Circle(Drawable):
     def __init__(self, at=None, rad=None):
         self.at = at
@@ -49,11 +52,15 @@ class Line(Drawable):
         self.end = end
 
     def do(self):
-        return start + end + ('line',)
+        return self.start + self.end + ('line',)
 
 class Rectangle(Drawable):
     def __init__(self, start, end):
-        return start + end + ('rectangle',)
+        self.start = start
+        self.end = end
+
+    def do(self):
+        return self.start + self.end + ('rectangle',)
 
 functions = \
     {
@@ -65,4 +72,5 @@ functions = \
     'pixel': pixel,
     'loc': loc,
     'identity': identity,
+    'and_': and_,
 }
