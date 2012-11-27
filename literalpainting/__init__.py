@@ -33,6 +33,13 @@ RE_INT = re.compile(r'\d+$')
 
 feature_parser = FeatStructParser()
 
+def preprocess(command):
+    """ Decapitalize first letter of sentence. """
+    tokens = command.strip(' .?!').split()
+    if tokens[0] not in ('I'):
+        tokens[0] = tokens[0].lower()
+    return tokens
+
 def num_production(n):
     """ Return a production NUM -> n """
     lhs = FeatStructNonterminal('NUM')
@@ -64,15 +71,16 @@ def parse():
     data = {}
     errors = []
 
+    command = request.forms.get('command')
+
     # preprocess
-    command = request.forms.get('command').strip(' .?!')
-    tokens = command.split()
+    tokens = preprocess(command)
 
     # Make a local copy of productions
     lproductions = list(productions)
 
     # find all integers
-    ints = set(filter(RE_INT.match, command.split()))
+    ints = set(filter(RE_INT.match, tokens))
     # Add a production for every integer
     lproductions.extend(map(num_production, ints))
 
@@ -83,7 +91,7 @@ def parse():
     parser = FeatureEarleyChartParser(lgrammar, trace=0)
 
     try:
-        trees = parser.nbest_parse(command.split())
+        trees = parser.nbest_parse(tokens)
         if not trees:
             errors = ['I could not parse this sentence.']
         elif len(trees) > 1:
