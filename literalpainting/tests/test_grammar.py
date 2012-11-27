@@ -1,7 +1,5 @@
 import unittest
 
-import bottle
-
 from nltk.grammar import (FeatStructNonterminal, FeatureGrammar)
 from nltk.parse.earleychart import FeatureEarleyChartParser
 from nltk.data import load as data_load
@@ -11,10 +9,6 @@ from literalpainting import (num_production,
                              grammar,
                              preprocess
                              )
-
-
-grammar = data_load('file:commandParser.fcfg')
-parser = FeatureEarleyChartParser(grammar, trace=0)
 
 class GrammarMixin:
     def parse(self, command):
