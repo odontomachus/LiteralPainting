@@ -18,6 +18,7 @@ NP[NUM=sg, TYPE=subject] -> 'me'
 # Shapes
 NP[NUM=sg, TYPE=shape, SEM=<?obj(?from,?to)>] -> Det[NUM=sg] N[TYPE=shape, SEM=?obj] PP[TYPE=from, SEM=?from] PP[TYPE=to, SEM=?to]
 NP[NUM=sg, TYPE=shape, SEM=<?obj(?at,?with)>] -> Det[NUM=sg] N[TYPE=shape, SEM=?obj] PP[TYPE=at, SEM=?at] PP[TYPE=with, SEM=?with]
+NP[NUM=sg, TYPE=shape, SEM=<?obj(?at,?with)>] -> Det[NUM=sg] N[TYPE=shape, SEM=?obj] PP[TYPE=with, SEM=?with] PP[TYPE=at, SEM=?at]
 
 # Property of shapes (eg radius, width?, height?)
 NP[NUM=sg, TYPE=property, SEM=<?obj(?of)>] -> Det[NUM=sg] N[TYPE=property, SEM=?obj] PP[TYPE=of, SEM=?of]

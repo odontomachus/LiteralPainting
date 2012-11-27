@@ -14,6 +14,8 @@ from bottle import static_file
 
 from beaker.middleware import SessionMiddleware
 
+import history
+
 import draw
 from draw import Drawable
 
@@ -95,30 +97,15 @@ def parse():
         if not trees:
             errors = ['I could not parse this sentence.']
         elif len(trees) > 1:
-            for tree in trees: print tree
             errors = ['This sentence had multiple interpretations.']
         else:
-
-            def do(items):
-                if not (isinstance(items, list) 
-                        or isinstance(items, tuple)):
-                    items = [items]
-
-                # Check whether all items are drawable
-                assert(reduce(lambda x,y: x and y, map(lambda x: isinstance(x, Drawable), items)))
-
-                # Track what we're drawing
-                session = bottle.request.environ.get('beaker.session')
-                history = session.get('history', [])
-                session['history'] = history
-                history.extend(items)
-                return [item.do() for item in items]
-
-            # setup an execution context
-            draw.functions['draw'] = do
-
             status = True
             try:
+                # Setup session for history
+                session = bottle.request.environ.get('beaker.session')
+                history.history = session.get('history', [])
+                session['history'] = history.history
+
                 commands = eval(str(trees[0].node['SEM']), draw.functions)
                 data = {
                     'sentence': request.forms.get('command'),

@@ -1,0 +1,3 @@
+history = None
+stack = None
+
