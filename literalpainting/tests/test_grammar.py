@@ -9,6 +9,7 @@ from nltk.data import load as data_load
 from literalpainting import (num_production,
                              RE_INT,
                              grammar,
+                             preprocess
                              )
 
 
@@ -17,7 +18,8 @@ parser = FeatureEarleyChartParser(grammar, trace=0)
 
 class GrammarMixin:
     def parse(self, command):
-        ints = set(filter(RE_INT.match, command.split()))
+        tokens = preprocess(command)
+        ints = set(filter(RE_INT.match, tokens))
         lproductions = list(grammar.productions())
         # Add a production for every integer
         lproductions.extend(map(num_production, ints))
@@ -27,7 +29,7 @@ class GrammarMixin:
 
         # Load grammar into a parser
         parser = FeatureEarleyChartParser(lgrammar, trace=0)
-        return parser.nbest_parse(command.split())
+        return parser.nbest_parse(tokens)
 
 class ShapeTestCase(unittest.TestCase, GrammarMixin):
     start = FeatStructNonterminal('NP')
@@ -66,3 +68,18 @@ class PPTestCase(unittest.TestCase, GrammarMixin):
         test = 'of 20 pixels'
         self.assertTrue(self.parse(test))
 
+class DeclSentenceTestCase(unittest.TestCase, GrammarMixin):
+    start = FeatStructNonterminal('S')
+    def test_want(self):
+        test = 'I want a line from 1 1 to 2 2'
+        self.assertTrue(self.parse(test))        
+
+class ImpSentenceTestCase(unittest.TestCase, GrammarMixin):
+    start = FeatStructNonterminal('S')
+    def test_give(self):
+        test = 'Give me a line from 1 1 to 2 2'
+        self.assertTrue(self.parse(test))        
+
+    def test_draw(self):
+        test = 'Draw me a line from 1 1 to 2 2'
+        self.assertTrue(self.parse(test))        

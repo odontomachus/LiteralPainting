@@ -3,11 +3,17 @@
 # Grammar Rules
 #############################
 
-S[SEM = ?vp] -> NP[NUM=?n] VP[NUM=?n,SEM=?vp]
+# Declarative sentence
+S[SEM = ?vp] -> NP[NUM=?n] VP[AGR=[TENSE=pres], NUM=?n,SEM=?vp]
+S[SEM = ?vp] -> VP[AGR=[TENSE=inf], SEM=?vp]
 
-VP[NUM=?n,SEM=<?v(?obj)>] -> TV[NUM=?n,SEM=?v] NP[SEM=?obj]
 
+VP[NUM=?n,SEM=<?v(?obj)>] -> TV[NUM=?n,SEM=?v,TENSE=pres] NP[SEM=?obj]
+VP[AGR=[TENSE=inf], NUM=?n, SEM=<?v(?obj)>] -> DTV[AGR=[TENSE=inf], NUM=?n,SEM=?v] NP[TYPE=subject] NP[SEM=?obj]
+
+# personal pronouns
 NP[NUM=sg, TYPE=person] -> 'I'
+NP[NUM=sg, TYPE=subject] -> 'me'
 
 # Shapes
 NP[NUM=sg, TYPE=shape, SEM=<?obj(?from,?to)>] -> Det[NUM=sg] N[TYPE=shape, SEM=?obj] PP[TYPE=from, SEM=?from] PP[TYPE=to, SEM=?to]
@@ -45,7 +51,9 @@ N[NUM=sg, TYPE=property, SEM=<\x.diameter(x)>] -> 'diameter'
 N[TYPE=length, NUM=sg,SEM=<\x.pixel(x)>] -> 'pixel'
 N[TYPE=length, NUM=pl,SEM=<\x.pixel(x)>] -> 'pixels'
 
-TV[NUM=sg, SEM=<\x.draw(x)>] -> 'want'
+TV[AGR=[TENSE=pres], NUM=sg, SEM=<\x.draw(x)>] -> 'want'
+DTV[AGR=[TENSE=inf], NUM=sg, SEM=<\x.draw(x)>] -> 'give'
+DTV[AGR=[TENSE=inf], NUM=sg, SEM=<\x.draw(x)>] -> 'draw'
 
 
 Prep[TYPE=to, OBJ=location] -> 'to'
