@@ -7,7 +7,7 @@ README = open(os.path.join(here, 'README.md')).read()
 CHANGES = open(os.path.join(here, 'CHANGES.txt')).read()
 
 requires = [
-    'nltk',
+    'nltk==2.0.5',
     'bottle',
     'jinja2',
     'beaker',
@@ -30,4 +30,3 @@ setup(name='LiteralPainting',
       test_suite='LiteralPainting',
       install_requires=requires,
       )
-
